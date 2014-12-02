@@ -1,0 +1,45 @@
+{
+  "name": "demeter",
+  "version": "0.0.0",
+  "description": "A simple integration server that stores builds and test status",
+  "main": "index.js",
+  "bin": {
+    "demeter": "./bin/demeter.js"
+  },
+  "scripts": {
+    "start": "./bin/demeter.js",
+    "test": "make test",
+    "benchmark": "make benchmark",
+    "travis-test": "make test && ((cat coverage/lcov.info | coveralls) || exit 0)",
+    "view-cover": "open coverage/index.html",
+    "vc": "open coverage/index.html",
+    "help": "make help"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jasonpincin/demeter.git"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasonpincin/demeter/issues"
+  },
+  "homepage": "https://github.com/jasonpincin/demeter",
+  "author": {
+    "name": "Jason Pincin",
+    "email": "jason@pincin.com",
+    "url": "http://jason.pincin.com/"
+  },
+  "contributors": [],
+  "devDependencies": {
+    "istanbul": "~0.2.8",
+    "jshint": "^2.5.6",
+    "tap-spec": "~0.1.9",
+    "tap-dot": "^0.2.2",
+    "tape": "~2.12.3"
+  },
+  "dependencies": {
+    "cicada": "^1.1.1",
+    "minimist": "^1.1.0"
+  }
+}
