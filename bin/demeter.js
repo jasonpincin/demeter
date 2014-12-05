@@ -1,16 +1,23 @@
 #!/usr/bin/env node
 
-var http    = require('http')
-,   demeter = require('..')
-,   argv    = require('minimist')(process.argv.slice(2), {
+var util     = require('util'),
+    http     = require('http'),
+    demeter  = require('..'),
+    log      = require('log-stream')({name: 'demeter'}),
+    through2 = require('through2'),
+    split    = require('split'),
+    pipeline = require('stream-combiner'),
+    argv     = require('minimist')(process.argv.slice(2), {
     alias: {
-        'repos': 'r',
+        'dir': 'd',
         'help': 'h',
-        'port': 'p'
+        'port': 'p',
+        'output': 'o'
     },
     default: {
         'port': 8001,
-        'repos': './demeter-ci'
+        'dir': './demeter-ci',
+        'output': 'text'
     }
 })
 
@@ -19,20 +26,42 @@ if (argv.help) {
         'Demeter - A simple node integration and build server',
         '',
         'Usage:',
-        '  demeter -r PATH',
+        '  demeter -d PATH',
         '',
         'Options:',
-        '  -r, --repos  Path to store commits & builds',
+        '  -d, --dir    Path to store commits & builds',
+        '  -o, --output Format to output logs in [text, json, none]',
         '  -h, --help   This help'
     ].join('\n'))
     process.exit(2)
 }
 
-var ci     = demeter({ repos: argv.repos })
-,   server = http.createServer(ci.handle)
+var ci     = demeter({ dir: argv.dir }),
+    server = http.createServer(ci.handle)
+
+var text = pipeline(split(), through2(function (chunk, enc, cb) {
+    var log = JSON.parse(chunk)
+    this.push(util.format('%s %s %s\n', log.time, log.level, log.msg))
+    cb()
+}), process.stdout)
+
+if (argv.output !== 'none')
+    log.stream.pipe(argv.output === 'json' ? process.stdout : text)
 
 server.on('listening', function () {
-    console.log('Demeter started on port %s', server.address().port)
+    log.info('demeter started on port %s', server.address().port)
+})
+
+ci.on('commit', function (commit) {
+    log.info('commit %s %s %s', commit.hash, commit.repo, commit.branch)
+})
+
+ci.on('install', function (install) {
+    log.info('install %s for %s', install.statusCode?'failed':'succeeded', install.commit.hash)
+})
+
+ci.on('test', function (test) {
+    log.info('test %s for %s', test.statusCode?'failed':'succeeded', test.commit.hash)
 })
 
 server.listen(argv.port)

@@ -9,7 +9,6 @@
   "scripts": {
     "start": "./bin/demeter.js",
     "test": "make test",
-    "benchmark": "make benchmark",
     "travis-test": "make test && ((cat coverage/lcov.info | coveralls) || exit 0)",
     "view-cover": "open coverage/index.html",
     "vc": "open coverage/index.html",
@@ -40,6 +39,10 @@
   },
   "dependencies": {
     "cicada": "^1.1.1",
-    "minimist": "^1.1.0"
+    "log-stream": "^4.0.0",
+    "minimist": "^1.1.0",
+    "split": "^0.3.2",
+    "stream-combiner": "^0.2.1",
+    "through2": "^0.6.3"
   }
 }

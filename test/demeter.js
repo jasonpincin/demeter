@@ -1,11 +1,10 @@
 var test    = require('tape'),
     demeter = require('..')
 
+var ci     = demeter({dir: __dirname + '/demeter-ci' })
+
 test('demeter', function (t) {
-    var ci = demeter({repos: __dirname + '/var' })
-
-    t.equal(typeof ci, 'object')
-    t.equal(ci.repodir, __dirname + '/var/repo')
-
+    t.equal(typeof ci, 'object',                        'demeter() returns an object (ci)')
+    t.equal(ci.repodir, __dirname + '/demeter-ci/repo', 'ci.repodir has expected value')
     t.end()
 })
