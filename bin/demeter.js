@@ -53,15 +53,15 @@ server.on('listening', function () {
 })
 
 ci.on('commit', function (commit) {
-    log.info('commit %s %s %s', commit.hash, commit.repo, commit.branch)
+    log.info({commit: commit}, 'commit %s %s %s', commit.hash, commit.repo, commit.branch)
 })
 
 ci.on('install', function (install) {
-    log.info('install %s for %s', install.statusCode?'failed':'succeeded', install.commit.hash)
+    log.info({commit: install.commit}, 'install %s for %s', install.statusCode?'failed':'succeeded', install.commit.hash)
 })
 
 ci.on('test', function (test) {
-    log.info('test %s for %s', test.statusCode?'failed':'succeeded', test.commit.hash)
+    log.info({commit: test.commit}, 'test %s for %s', test.statusCode?'failed':'succeeded', test.commit.hash)
 })
 
 server.listen(argv.port)
